@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, Image } from "react-native";
 import { Contato, getContatoById } from "../../services/contatos";
 import { useEffect, useState } from "react";
 import { styles } from "../../estilos/main";
@@ -18,6 +18,7 @@ export default function Detalhes() {
         <View style={styles.container}>
             {contato ?
                 <>
+                    <Image source={{uri: contato.foto}} style={{ width: 100, height: 100 }} />
                     <Text style={styles.text}>{contato.nome}</Text>
                     <Text style={styles.text}>{contato.email}</Text>
                     <Text style={styles.text}>{contato.telefone}</Text>
