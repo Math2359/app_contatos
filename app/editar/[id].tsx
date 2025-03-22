@@ -1,0 +1,77 @@
+import { useEffect, useState } from "react";
+import { useLocalSearchParams, router } from "expo-router";
+import { View, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { Contato, getContatoById, getContatos } from "../../services/contatos";
+import { api } from "../../services/api";
+import { styles } from "../../estilos/main";
+
+export default function EditarContato() {
+  const { id } = useLocalSearchParams();
+  const [contato, setContato] = useState<Omit<Contato, "_id"> | null>(null);
+
+  useEffect(() => {
+    const carregarContato = async () => {
+      try {
+        const contato: Contato = await getContatoById(id as string);
+        const { _id, ...resto } = contato;
+        setContato(resto);
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível carregar o contato");
+      }
+    };
+    carregarContato();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!contato?.nome || !contato.email || !contato.telefone || !contato.endereco || !contato.foto) {
+      Alert.alert("Erro", "Preencha todos os campos");
+      return;
+    }
+
+    try {
+      await api.put(`/contatos/${id}`, contato);
+      Alert.alert("Sucesso", "Contato atualizado!");
+      router.back();
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível atualizar o contato");
+    }
+  };
+
+  if (!contato) return null;
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Nome"
+        value={contato.nome}
+        onChangeText={(v) => setContato({ ...contato, nome: v })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={contato.email}
+        onChangeText={(v) => setContato({ ...contato, email: v })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Telefone"
+        value={contato.telefone}
+        onChangeText={(v) => setContato({ ...contato, telefone: v })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Endereço"
+        value={contato.endereco}
+        onChangeText={(v) => setContato({ ...contato, endereco: v })}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Endereço da Foto (URL)"
+        value={contato.foto}
+        onChangeText={(v) => setContato({ ...contato, foto: v })}
+      />
+      <Button title="Atualizar" onPress={handleSubmit} />
+    </View>
+  );
+}

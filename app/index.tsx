@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, FlatList, Button, Image, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { getContatos, deleteContato, Contato } from "../services/contatos";
 import { Link } from "expo-router";
+import { styles } from "../estilos/main";
 
 export default function HomeScreen() {
   const [contatos, setContatos] = useState<Contato[]>([]);
@@ -53,6 +54,15 @@ export default function HomeScreen() {
               <Text>{item.telefone}</Text>
               <Text>{item.endereco}</Text>
               <Button title="Excluir" onPress={() => handleDelete(item._id)} />
+
+              <Link href={{ pathname: "/editar/[id]", params: { id: item._id }
+               }}>
+                <Text style={{ color: "blue", marginTop: 5 }}>Editar</Text>
+              </Link>
+              <Link href={{ pathname: "/detalhes/[id]", params: { id: item._id }
+               }}>
+                <Text style={{ color: "blue", marginTop: 5 }}>Ver</Text>
+              </Link>
             </View>
           </View>
         )}
@@ -63,14 +73,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  contato: { flexDirection: "row", padding: 10, borderBottomWidth: 1 },
-  foto: { width: 50, height: 50, borderRadius: 25 },
-  semFoto: { width: 50, height: 50, justifyContent: "center", alignItems: "center", backgroundColor: "#ddd", borderRadius: 25 },
-  info: { marginLeft: 10 },
-  nome: { fontWeight: "bold" },
-  botaoAdicionar: { backgroundColor: "blue", padding: 10, marginTop: 20, borderRadius: 5, alignItems: "center" },
-  textoBotao: { color: "white", fontSize: 16 },
-});
